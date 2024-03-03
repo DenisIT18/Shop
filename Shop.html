@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultural Treasures Hub - Shop</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Основные стили */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        section {
+            margin-top: 60px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Стили для категорий и продуктов */
+        #categories {
+            text-align: center;
+        }
+
+        #category,
+        #subcategory,
+        #search-input {
+            margin: 10px;
+            padding: 5px;
+        }
+
+        #product-catalog {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .product {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .product img {
+            max-width: 100%;
+        }
+
+        .product button {
+            width: 100%;
+            background-color: #4caf50;
+            color: white;
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Стили для выбранных товаров */
+        #selected-items {
+            text-align: center;
+        }
+
+        #cart {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        /* Стили для аутентификации и управления учетной записью */
+        #user-auth {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Стили для обратной связи и оценок */
+        #feedback {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #user-ratings {
+            text-align: left;
+        }
+
+        /* Стили для мультиязычности */
+        #language {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Улучшенная адаптивность */
+        @media only screen and (max-width: 768px) {
+            section {
+                padding: 10px;
+            }
+
+            .product {
+                width: 100%;
+            }
+        }
+
+        /* Улучшенные стили */
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="Project.html">Home</a></li>
+            <li><a href="Shop.html">Shop</a></li>
+            <li><a href="Project.html">About</a></li>
+            <li><a href="Project.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Выбор категории -->
+    <section id="categories">
+        <h2>Categories</h2>
+        <label for="category">Choose a category:</label>
+        <select id="category" onchange="updateSubcategories()">
+            <option value="clothes">Clothing</option>
+            <option value="food">Food</option>
+            <option value="skincare">Cosmetics</option>
+            <option value="cleaning">Household Chemicals</option>
+            <option value="books">Books</option>
+        </select>
+
+        <label for="subcategory">Choose a subcategory:</label>
+        <select id="subcategory">
+            <!-- Подкатегории добавляются динамически с использованием JavaScript -->
+        </select>
+
+        <div>
+            <label for="search-input">Search:</label>
+            <input type="text" id="search-input" oninput="searchProducts()">
+        </div>
+    </section>
+
+    <!-- Отображение выбранных товаров -->
+    <section id="selected-items">
+        <h2>Selected Items</h2>
+        <div id="cart"></div>
+    </section>
+
+    <!-- Отображение каталога продуктов -->
+    <section id="product-catalog">
+        <h2>Product Catalog</h2>
+        <div id="products"></div>
+    </section>
+
+    <!-- Аутентификация и управление учетной записью -->
+    <section id="user-auth">
+        <h2>User Authentication</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username">
+        <button onclick="login()">Login</button>
+        <div id="user-info" style="display: none;">
+            <p id="user-welcome"></p>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </section>
+
+    <!-- Обратная связь и оценки -->
+    <section id="feedback">
+        <h2>Feedback and Ratings</h2>
+        <textarea id="user-feedback" placeholder="Leave your feedback..."></textarea>
+        <button onclick="submitFeedback()">Submit Feedback</button>
+        <div id="ratings">
+            <h3>User Ratings</h3>
+            <p>Average Rating: <span id="average-rating">N/A</span></p>
+            <div id="user-ratings"></div>
+        </div>
+    </section>
+
+    <!-- Мультиязычность -->
+    <section id="language">
+        <h2>Language Preferences</h2>
+        <label for="language-select">Select Language:</label>
+        <select id="language-select" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+            <option value="kk">Қазақша</option>
+            <option value="ko">한국어</option>
+        </select>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Cultural Treasures Hub</p>
+    </footer>
+
+    <script>
+        // Симуляция каталога продуктов (в реальности данные будут приходить с сервера)
+        var productCatalog = {
+            clothes: [
+                { name: { en: "Traditional Hanbok", ru: "Традиционный Ханбок", kk: "Традиционды Ханбок", ko: "전통 한복" }, price: 150, image: "hanbok.jpg" },
+                { name: { en: "Modern Hanbok", ru: "Современный Ханбок", kk: "Қазіргі Ханбок", ko: "현대 한복" }, price: 120, image: "modern_hanbok.jpg" },
+            ],
+            food: [
+                { name: { en: "Samyang Ramen", ru: "Самъянг Рамён", kk: "Самъянг Рамён", ko: "삼양 라면" }, price: 5, image: "samyang_ramen.jpg" },
+                { name: { en: "Shin Ramyun", ru: "Шин Рамён", kk: "Шин Рамён", ko: "신라면" }, price: 6, image: "shin_ramyun.jpg" },
+            ],
+            skincare: [
+                { name: { en: "Innisfree Skincare Set", ru: "Набор для ухода за кожей Innisfree", kk: "Иннисфри дермейнгі көмек", ko: "이니스프리 스킨케어 세트" }, price: 30, image: "innisfree_set.jpg" },
+                { name: { en: "Nature Republic Face Mask", ru: "Маска для лица Nature Republic", kk: "Nature Republic тауыпты маска", ko: "네이처 리퍼블릭 페이스 마스크" }, price: 8, image: "face_mask.jpg" },
+            ],
+            cleaning: [
+                { name: { en: "All-Purpose Cleaner", ru: "Универсальный чистящий средство", kk: "Жалпы көмекші", ko: "만능 청소제" }, price: 12, image: "cleaner.jpg" },
+                { name: { en: "Laundry Detergent", ru: "Стиральный порошок", kk: "Киімнің суығышы", ko: "세탁 세제" }, price: 15, image: "detergent.jpg" },
+            ],
+        };
+
+        var currentUser = null;
+        var userRatings = [];
+
+        function updateSubcategories() {
+            // Очистим текущие подкатегории
+            var subcategorySelect = document.getElementById("subcategory");
+            subcategorySelect.innerHTML = "";
+
+            // Получим выбранную категорию
+            var selectedCategory = document.getElementById("category").value;
+
+            // Добавим подкатегории в зависимости от выбранной категории
+            if (selectedCategory === "clothes") {
+                addOption(subcategorySelect, "hanbok", "Hanbok");
+            } else if (selectedCategory === "food") {
+                addOption(subcategorySelect, "ramen", "Ramen");
+                addOption(subcategorySelect, "kimchi", "Kimchi");
+                addOption(subcategorySelect, "Korean sauces");
+                addOption(subcategorySelect, "Korean drinks");
+            } else if (selectedCategory === "skincare") {
+                addOption(subcategorySelect, "skincare", "Skincare");
+            } else if (selectedCategory === "cleaning") {
+                addOption(subcategorySelect, "cleaning", "Cleaning Supplies");
+            } else if (selectedCategory === "books") {
+                addOption(subcategorySelect, "fiction", "Fiction");
+                addOption(subcategorySelect, "classics", "Classic Literature");
+                addOption(subcategorySelect, "fantasy", "Fantasy");
+                addOption(subcategorySelect, "science", "Science");
+                addOption(subcategorySelect, "history", "History");
+                addOption(subcategorySelect, "religious");
+            }
+
+            // Отобразим продукты выбранной подкатегории
+            displayProducts(subcategorySelect.value);
+        }
+
+        function addOption(selectElement, value, text) {
+            var option = document.createElement("option");
+            option.value = value;
+            option.text = text;
+            selectElement.add(option);
+        }
+
+        // Функция для отображения продуктов в выбранной подкатегории
+        function displayProducts(subcategory) {
+            var productsDiv = document.getElementById("products");
+            productsDiv.innerHTML = "";
+
+            if (productCatalog[subcategory]) {
+                productCatalog[subcategory].forEach(function (product) {
+                    var productDiv = document.createElement("div");
+                    productDiv.className = "product";
+                    var productName = product.name.en; // По умолчанию отображаем на английском
+
+                    // Добавим изображение товара
+                    var productImage = document.createElement("img");
+                    productImage.src = "C:\Users\Денис\Desktop" + product.image;  // Путь к изображению в папке "images"
+                    productImage.alt = productName;
+                    productImage.style.maxWidth = "100%";
+                    productDiv.appendChild(productImage);
+
+                    // Добавим кнопку для добавления товара в выбранные товары
+                    var addButton = document.createElement("button");
+                    addButton.textContent = "Add to Cart";
+                    addButton.onclick = function () {
+                        addToCart(productName, product.price);
+                    };
+
+                    // Добавим информацию о товаре в блок
+                    var productInfo = document.createElement("p");
+                    productInfo.textContent = `Name: ${product.name.en}\nPrice: $${product.price}`;
+
+                    // Добавим элементы в блок продукта
+                    productDiv.appendChild(productInfo);
+                    productDiv.appendChild(addButton);
+
+                    // Добавим блок продукта в общий контейнер
+                    productsDiv.appendChild(productDiv);
+                });
+            }
+        }
+
+        // Функция для добавления товара в выбранные товары
+        function addToCart(productName, price) {
+            var cartDiv = document.getElementById("cart");
+            var cartItem = document.createElement("p");
+            cartItem.textContent = `Added to cart: ${productName} - $${price}`;
+            cartDiv.appendChild(cartItem);
+            showNotification("Item added to cart");
+            updateCartTotal();
+        }
+
+        // Функция для отображения уведомлений
+        function showNotification(message) {
+            alert(message);
+        }
+
+        // Функция для обновления общей стоимости товаров в корзине
+        function updateCartTotal() {
+            var cartItems = document.getElementById("cart").getElementsByTagName("p");
+            var total = 0;
+
+            for (var i = 0; i < cartItems.length; i++) {
+                var itemPrice = parseFloat(cartItems[i].textContent.split("$")[1]);
+                total += itemPrice;
+            }
+
+            var cartTotal = document.createElement("p");
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+
+            // Удалим предыдущий общий итог, если он существует
+            var existingTotal = document.getElementById("cart-total");
+            if (existingTotal) {
+                existingTotal.remove();
+            }
+
+            // Добавим новый общий итог
+            cartTotal.id = "cart-total";
+            document.getElementById("cart").appendChild(cartTotal);
+        }
+
+        // Функция для поиска товаров
+        function searchProducts() {
+            var searchTerm = document.getElementById("search-input").value.toLowerCase();
+            var productsDiv = document.getElementById("products");
+            productsDiv.innerHTML = "";
+
+            // Перебираем все товары в каталоге
+            for (var subcategory in productCatalog) {
+                productCatalog[subcategory].forEach(function (product) {
+                    var productName = product.name.en.toLowerCase();
+                    // Если поисковый запрос соответствует имени товара, отображаем товар
+                    if (productName.includes(searchTerm)) {
+                        var productDiv = document.createElement("div");
+                        productDiv.className = "product";
+                        
+                        // Добавим изображение товара
+                        var productImage = document.createElement("img");
+                        productImage.src = "images/" + product.image;  // Путь к изображению в папке "images"
+                        productImage.alt = productName;
+                        productImage.style.maxWidth = "100%";
+                        productDiv.appendChild(productImage);
+
+                        // Добавляем кнопку и информацию о товаре, как и раньше
+                        var addButton = document.createElement("button");
+                        addButton.textContent = "Add to Cart";
+                        addButton.onclick = function () {
+                            addToCart(productName, product.price);
+                        };
+                        var productInfo = document.createElement("p");
+                        productInfo.textContent = `Name: ${product.name.en}\nPrice: $${product.price}`;
+                        productDiv.appendChild(productInfo);
+                        productDiv.appendChild(addButton);
+                        productsDiv.appendChild(productDiv);
+                    }
+                });
+            }
+        }
+
+        // Функция для аутентификации пользователя
+        function login() {
+            var username = document.getElementById("username").value;
+            if (username.trim() !== "") {
+                currentUser = username;
+                document.getElementById("user-info").style.display = "block";
+                document.getElementById("user-welcome").textContent = "Welcome, " + currentUser + "!";
+                document.getElementById("username").value = "";
+            }
+        }
+
+        // Функция для выхода из учетной записи
+        function logout() {
+            currentUser = null;
+            document.getElementById("user-info").style.display = "none";
+        }
+
+        // Функция для отправки обратной связи
+        function submitFeedback() {
+            var feedbackText = document.getElementById("user-feedback").value;
+            if (feedbackText.trim() !== "") {
+                showNotification("Feedback submitted. Thank you!");
+                document.getElementById("user-feedback").value = "";
+            }
+        }
+
+        // Функция для изменения языка
+        function changeLanguage() {
+            var selectedLanguage = document.getElementById("language-select").value;
+            // Реализуйте логику изменения языка в соответствии с выбором пользователя
+            // Для примера можно использовать объекты с переводами для разных языков
+        }
+
+        // Инициализация: отобразим продукты при загрузке страницы
+        updateSubcategories();
+    </script>
+</body>
+
+</html>
+
+
